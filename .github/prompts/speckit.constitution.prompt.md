@@ -1,3 +1,3 @@
----
-agent: speckit.constitution
----
+______________________________________________________________________
+
+## agent: speckit.constitution

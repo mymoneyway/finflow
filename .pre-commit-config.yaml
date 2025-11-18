@@ -1,0 +1,62 @@
+repos:
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.20.0
+    hooks:
+      - id: yamlfmt
+        exclude: misc
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+        exclude: '.*\.(yaml|yml)'
+      - id: trailing-whitespace
+      - id: requirements-txt-fixer
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 1.0.0
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm
+          - mdformat-black
+          - mdformat-config
+          - mdformat-toc
+  - repo: https://github.com/hadolint/hadolint.git
+    rev: v2.14.0
+    hooks:
+      - id: hadolint
+  - repo: https://github.com/psf/black
+    rev: 25.11.0
+    hooks:
+      - id: black
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.5
+    hooks:
+      - id: ruff
+        args: [--fix]
+  - repo: https://github.com/DetachHead/basedpyright-pre-commit-mirror
+    rev: 1.33.0
+    hooks:
+      - id: basedpyright
+        language: system
+  - repo: https://github.com/PyCQA/pylint
+    rev: v4.0.3
+    hooks:
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        args: ["-rn", # Only display messages
+          "-sn"] # Don't display the score
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: insert-license
+        name: Add license for all python files
+        types: [python]
+        args:
+          - --comment-style
+          - "|#|"
+          - --license-filepath
+          - license-templates.txt
+          - --use-current-year
