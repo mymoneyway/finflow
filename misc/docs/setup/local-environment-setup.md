@@ -2,11 +2,32 @@
 
 This guide explains how to prepare a local FinFlow development environment and keep code quality checks consistent.
 
-## Assumptions
+<!-- mdformat-toc start --slug=github --maxlevel=6 --minlevel=2 -->
+
+- [Assumptions](#assumptions)
+- [Task Installation](#task-installation)
+- [Pre-Commit Installation](#pre-commit-installation)
+  - [What Pre-Commit Does](#what-pre-commit-does)
+    - [Automatic Run on Commit](#automatic-run-on-commit)
+    - [Run Hooks Manually (Full Scan)](#run-hooks-manually-full-scan)
+    - [Update Hook Versions](#update-hook-versions)
+
+<!-- mdformat-toc end -->
+
+## Assumptions<a name="assumptions"></a>
 
 Run all commands from the repository root using PowerShell (Windows) unless noted otherwise.
 
-## Pre-Commit Installation
+## Task Installation<a name="task-installation"></a>
+
+This repo uses [Task](https://taskfile.dev/) as a cross-platform command runner to manage its build steps.
+
+- Run `task` to list all available commands.
+- Run `task --summary task-name` to see details about a specific task.
+- Run multiple tasks at once: `task task1 task2 …`.
+- Set task variables using env-style syntax: `task sample-task MYVAR=value`.
+
+## Pre-Commit Installation<a name="pre-commit-installation"></a>
 
 Install the pre-commit framework and register the Git hook:
 
@@ -15,25 +36,25 @@ pip install pre-commit
 pre-commit install
 ```
 
-## What Pre-Commit Does
+### What Pre-Commit Does<a name="what-pre-commit-does"></a>
 
 Pre-commit executes the configured hooks (formatting, linting, security, etc.) defined in `.pre-commit-config.yaml` before each commit. If any hook fails, the commit is blocked until issues are fixed.
 
-### Automatic Run on Commit
+#### Automatic Run on Commit<a name="automatic-run-on-commit"></a>
 
 After installation the hooks run every time you commit. No extra action required.
 
-### Run Hooks Manually (Full Scan)
+#### Run Hooks Manually (Full Scan)<a name="run-hooks-manually-full-scan"></a>
 
 Execute all hooks against the entire codebase (not just staged changes):
 
 ```powershell
-task pre-commit
+task pre-commit:all
 ```
 
 Use this before larger refactors or prior to opening a PR.
 
-### Update Hook Versions
+#### Update Hook Versions<a name="update-hook-versions"></a>
 
 Refresh all hook repositories to their latest declared revisions:
 
@@ -42,22 +63,3 @@ task pre-commit:update
 ```
 
 Run periodically to stay current with upstream improvements.
-
-## Common Troubleshooting
-
-| Issue                         | Cause                             | Fix                                                                        |
-| ----------------------------- | --------------------------------- | -------------------------------------------------------------------------- |
-| Hook keeps reformatting files | Formatter config mismatch         | Re-run commit; accept formatting or adjust config in the hook repo section |
-| Long execution time           | Full scan on large changes        | Prefer incremental commits; use manual full scan sparingly                 |
-| Python package import errors  | Missing local virtual environment | Create and activate venv before running hooks                              |
-
-## Recommended Workflow
-
-1. Make changes
-1. Run `task pre-commit` (optional full scan)
-1. Stage & commit (hooks auto-run)
-1. Fix any reported issues and recommit
-
-## Next Steps
-
-Set up additional FinFlow tooling (n8n workflows, parser modules) after ensuring pre-commit is working consistently.
