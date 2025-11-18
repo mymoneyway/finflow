@@ -19,7 +19,7 @@ Build Looker Studio dashboards including Sankey money-flow charts
 Architecture Description
 Use the following diagram to describe the architecture section of the constitution file:
 flowchart LR
-    A1[Gmail</br>Incoming emails with statements] 
+    A1[Gmail</br>Incoming emails with statements]
     A2[Google Drive Uploads</br>Manual or automatic file drop]
     A1 --> B[n8n Ingestion</br>Detect attachments, filter, save]
     A2 --> B[n8n Ingestion</br>Detect new files, filter, save]

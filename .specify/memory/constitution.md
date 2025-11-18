@@ -112,29 +112,29 @@ FinFlow implements a six-stage ETL pipeline for personal finance automation:
 
 ```mermaid
 flowchart LR
-    A1[Gmail<br/>Incoming emails with statements] 
+    A1[Gmail<br/>Incoming emails with statements]
     A2[Google Drive Uploads<br/>Manual or automatic file drop]
-    
+
     A1 --> B[n8n Ingestion<br/>Detect attachments, filter, save]
     A2 --> B
-    
+
     B --> C[Google Drive Raw<br/>Bank statements storage]
-    
+
     C --> D[n8n Parsing<br/>Excel and PDF parsing]
-    
+
     D --> E[Google Sheets<br/>Normalized transactions]
-    
+
     E --> F[Looker Studio<br/>Dashboards and Sankey charts]
 ```
 
 **Stage Definitions**:
 
 1. **Sources (Gmail, Drive)**: Automated and manual file ingestion channels
-2. **Ingestion (n8n)**: Trigger-based detection, validation, raw file persistence
-3. **Raw Storage (Drive)**: Immutable archive of original statements
-4. **Parsing (n8n + scripts)**: Format-specific conversion to JSON
-5. **Normalized Storage (Sheets)**: Canonical schema for all transactions
-6. **Visualization (Looker Studio)**: Interactive dashboards, Sankey flow charts
+1. **Ingestion (n8n)**: Trigger-based detection, validation, raw file persistence
+1. **Raw Storage (Drive)**: Immutable archive of original statements
+1. **Parsing (n8n + scripts)**: Format-specific conversion to JSON
+1. **Normalized Storage (Sheets)**: Canonical schema for all transactions
+1. **Visualization (Looker Studio)**: Interactive dashboards, Sankey flow charts
 
 **Repository Structure**:
 
@@ -188,13 +188,13 @@ finflow/
 All changes follow this workflow:
 
 1. **Feature Specification** (`/specs/[###-feature]/spec.md`): Define user stories with acceptance criteria
-2. **Implementation Plan** (`/specs/[###-feature]/plan.md`): Technical design, affected components, testing strategy
-3. **Constitution Check**: Verify compliance with all principles before implementation
-4. **Test Creation**: Write failing tests for new parsers, normalization rules, or workflow logic
-5. **Implementation**: Build the feature
-6. **Validation**: Tests pass, manual end-to-end verification via dashboard
-7. **Documentation**: Update affected docs (parser READMEs, schema docs, setup guides)
-8. **Review**: Code review verifies principle compliance + test coverage
+1. **Implementation Plan** (`/specs/[###-feature]/plan.md`): Technical design, affected components, testing strategy
+1. **Constitution Check**: Verify compliance with all principles before implementation
+1. **Test Creation**: Write failing tests for new parsers, normalization rules, or workflow logic
+1. **Implementation**: Build the feature
+1. **Validation**: Tests pass, manual end-to-end verification via dashboard
+1. **Documentation**: Update affected docs (parser READMEs, schema docs, setup guides)
+1. **Review**: Code review verifies principle compliance + test coverage
 
 ### 2. Naming Conventions
 
@@ -207,18 +207,21 @@ All changes follow this workflow:
 ### 3. Versioning Strategy
 
 **n8n Workflows**:
+
 - Use semantic versioning in workflow descriptions: `v[MAJOR].[MINOR].[PATCH]`
 - **MAJOR**: Breaking change to input/output schema or trigger contract
 - **MINOR**: New functionality (e.g., additional error handling, new data fields)
 - **PATCH**: Bug fixes, performance improvements, refactoring
 
 **Parsers**:
+
 - Version documented in parser module docstring
 - **MAJOR**: Breaking schema change (output no longer matches normalized schema)
 - **MINOR**: Support for new statement format variant
 - **PATCH**: Bug fixes in field mapping logic
 
 **Normalized Schema** (`normalized-schema.md`):
+
 - Version tracked in document header
 - **MAJOR**: Column removal or rename
 - **MINOR**: New required column
@@ -227,15 +230,18 @@ All changes follow this workflow:
 ### 4. Testing Standards
 
 **Parser Testing** (MANDATORY for new parsers):
+
 - Unit tests MUST validate: sample file parsing, schema compliance, error handling (malformed dates, missing amounts)
 - Test files MUST use anonymized data (no real account numbers, names, or amounts)
 - Coverage target: 90%+ for parser logic
 
 **Workflow Testing** (RECOMMENDED):
+
 - End-to-end tests: Drop sample file in Drive → verify normalized row appears in Sheets
 - Manual testing checklist documented in `/misc/docs/etl/testing-checklist.md`
 
 **Dashboard Testing** (MANUAL):
+
 - After schema changes, verify: Sankey chart renders, filters work, date ranges accurate
 - Screenshot expected vs. actual dashboard state for regression validation
 
@@ -244,9 +250,9 @@ All changes follow this workflow:
 All workflows MUST implement:
 
 1. **Error Nodes**: n8n error handling nodes configured for each parser/API call
-2. **Quarantine**: Failed files moved to `Drive/FinFlow/Quarantine/[YYYY-MM-DD]/`
-3. **Alerts**: Critical failures trigger notification (document recipient in `/misc/docs/setup/alerts.md`)
-4. **Logging**: Use n8n's logging nodes with structured JSON: `{timestamp, stage, error, correlationId, file}`
+1. **Quarantine**: Failed files moved to `Drive/FinFlow/Quarantine/[YYYY-MM-DD]/`
+1. **Alerts**: Critical failures trigger notification (document recipient in `/misc/docs/setup/alerts.md`)
+1. **Logging**: Use n8n's logging nodes with structured JSON: `{timestamp, stage, error, correlationId, file}`
 
 ### 6. Documentation Requirements
 
@@ -265,33 +271,39 @@ GitHub Copilot is the primary AI assistant for FinFlow development. All contribu
 ### 1. Feature Development Workflow with Copilot
 
 **Step 1: Specification Creation**
+
 - Use Copilot Chat to draft feature spec from user requirements
 - Prompt: "Create a feature spec for [requirement] following /misc/.specify/templates/spec-template.md. Include user stories with priorities and acceptance criteria."
 - Review and refine: Copilot generates initial structure; you add domain-specific details
 
 **Step 2: Implementation Planning**
+
 - Ask Copilot to analyze constitutional compliance
 - Prompt: "Review this spec against /.specify/memory/constitution.md. Check for violations of the 7 core principles."
 - Generate implementation plan: "Create implementation plan following plan-template.md. Focus on ETL stages affected: [ingestion/parsing/normalization]."
 
 **Step 3: Parser Development**
+
 - Provide sample data to Copilot (anonymized)
 - Prompt: "Create a parser for [BankName] that converts this Excel format to our normalized schema in /misc/docs/etl/normalized-schema.md. Follow modular parsing principle (Principle IV)."
 - Copilot generates: parser.py, tests, README
 - Verify: Schema compliance, error handling, sample file coverage
 
 **Step 4: n8n Workflow Design**
+
 - Use Copilot to design workflow logic (not the JSON export)
 - Prompt: "Design error handling logic for n8n workflow that processes [bank] statements. Must quarantine failures and retry with exponential backoff per Principle V."
 - Copilot provides: pseudocode, error scenarios, logging structure
 - Manually implement in n8n GUI, then export to `/n8n/workflows/`
 
 **Step 5: Test Generation**
+
 - Always generate tests BEFORE implementation
 - Prompt: "Write pytest tests for [parser/function]. Test cases: valid input, missing required fields, invalid date formats, malformed amounts. Target 90% coverage."
 - Run tests → verify they FAIL → implement feature → tests PASS
 
 **Step 6: Documentation Updates**
+
 - Auto-generate documentation updates
 - Prompt: "Update /misc/docs/etl/normalized-schema.md to document the new [FieldName] column. Include: purpose, data type, Looker Studio usage, migration notes."
 
@@ -300,13 +312,15 @@ GitHub Copilot is the primary AI assistant for FinFlow development. All contribu
 Store reusable prompts in `/misc/docs/copilot/prompt-examples.md`:
 
 **Constitution Check**:
+
 ```
-Review [feature-spec.md] against /.specify/memory/constitution.md. 
-For each of the 7 core principles, verify compliance. 
+Review [feature-spec.md] against /.specify/memory/constitution.md.
+For each of the 7 core principles, verify compliance.
 Flag violations with severity (CRITICAL/WARNING) and suggest mitigation.
 ```
 
 **Parser Scaffolding**:
+
 ```
 Create Python parser module for [BankName] at /scripts/parsers/[bank-slug]/:
 - Input: Excel file with columns [list columns]
@@ -316,6 +330,7 @@ Create Python parser module for [BankName] at /scripts/parsers/[bank-slug]/:
 ```
 
 **Schema Migration Plan**:
+
 ```
 Generate migration plan for schema change: adding [NewColumn] to normalized schema.
 Include:
@@ -326,6 +341,7 @@ Include:
 ```
 
 **n8n Error Handling Design**:
+
 ```
 Design error handling for n8n workflow [workflow-name]:
 - Stage: [ingestion/parsing/normalization]
@@ -337,13 +353,15 @@ Design error handling for n8n workflow [workflow-name]:
 ### 3. Testing with Copilot
 
 **Test-Driven Development Pattern**:
+
 1. Copilot generates failing tests from acceptance criteria
-2. Prompt: "Convert user story acceptance criteria from spec.md into pytest tests. Tests must FAIL initially."
-3. Review test quality: edge cases, schema validation, error paths
-4. Implement feature until tests pass
-5. Copilot assists with refactoring while keeping tests green
+1. Prompt: "Convert user story acceptance criteria from spec.md into pytest tests. Tests must FAIL initially."
+1. Review test quality: edge cases, schema validation, error paths
+1. Implement feature until tests pass
+1. Copilot assists with refactoring while keeping tests green
 
 **Test Data Generation**:
+
 - Prompt: "Generate 10 anonymized bank transaction rows for testing [BankName] parser. Include edge cases: missing merchant, negative amounts, future dates, non-USD currency."
 - Copilot creates realistic test fixtures without real PII
 
@@ -352,6 +370,7 @@ Design error handling for n8n workflow [workflow-name]:
 Before submitting PR, use Copilot for self-review:
 
 **Constitution Compliance**:
+
 ```
 Review this [parser/workflow/script] against constitution principles:
 - Data Pipeline Integrity: Check idempotency, error quarantine, logging
@@ -360,6 +379,7 @@ Review this [parser/workflow/script] against constitution principles:
 ```
 
 **Security Audit**:
+
 ```
 Audit this code for security issues:
 - Credential exposure in logs or error messages
@@ -373,31 +393,38 @@ Audit this code for security issues:
 New developers use Copilot-guided onboarding:
 
 1. **Understanding the System**:
+
    - Prompt: "Explain the FinFlow ETL pipeline using /misc/docs/architecture/ and README.md. What are the 6 stages and their responsibilities?"
-   
-2. **Constitution Learning**:
+
+1. **Constitution Learning**:
+
    - Prompt: "Summarize the 7 core principles from /.specify/memory/constitution.md. For each, explain WHY it exists (the rationale)."
 
-3. **First Task Walkthrough**:
+1. **First Task Walkthrough**:
+
    - Prompt: "I'm adding a parser for [NewBank]. Walk me through the contribution process from /.specify/memory/constitution.md. Generate the feature spec outline."
 
 ### 6. Documentation Maintenance
 
 **Quarterly Documentation Review**:
+
 - Prompt: "Audit /misc/docs/ for outdated information. Check: workflow versions match /n8n/workflows/, schema docs match Google Sheets reality, setup guides reference current n8n version."
 
 **Auto-Generate Runbooks**:
+
 - Prompt: "Create incident response runbook for scenario: [parsing workflow fails for all banks]. Include: diagnosis steps, rollback procedure, escalation path. Save to /misc/docs/setup/runbooks/."
 
 ### 7. Best Practices
 
 **DO**:
+
 - ✅ Always provide Copilot with constitution context for feature work
 - ✅ Use Copilot for boilerplate (tests, parser scaffolds, docs)
 - ✅ Verify Copilot output against principles before committing
 - ✅ Document successful Copilot prompts in `/misc/docs/copilot/prompt-examples.md`
 
 **DON'T**:
+
 - ❌ Blindly accept Copilot's credential handling (always verify OAuth2 usage)
 - ❌ Skip manual testing of Copilot-generated parsers with real anonymized data
 - ❌ Let Copilot generate n8n workflow JSON exports (use GUI → export workflow instead)
@@ -422,15 +449,16 @@ This constitution is the supreme governing document for FinFlow development. All
 **Amendment Process**:
 
 1. Propose amendment via issue/PR with rationale
-2. Document impact on existing workflows, parsers, and dashboards
-3. Require approval from project maintainer(s)
-4. Update constitution version per semantic versioning rules
-5. Create migration plan for any breaking principle changes
-6. Update all dependent documentation (templates, guides, READMEs)
+1. Document impact on existing workflows, parsers, and dashboards
+1. Require approval from project maintainer(s)
+1. Update constitution version per semantic versioning rules
+1. Create migration plan for any breaking principle changes
+1. Update all dependent documentation (templates, guides, READMEs)
 
 **Complexity Justification**:
 
 Deviations from principles MUST be documented in the relevant specification's "Complexity Tracking" section with:
+
 - Which principle is violated
 - Why the violation is necessary (technical or business constraint)
 - Mitigation plan (how impact is minimized)

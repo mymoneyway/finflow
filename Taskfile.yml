@@ -1,0 +1,23 @@
+version: "3"
+vars:
+  IMAGE: docker.n8n.io/n8nio/n8n
+  CONTAINER: finflow-n8n
+  PORT: "5678"
+  DATA_DIR: "{{.PWD}}/n8n/data"
+tasks:
+  n8n:pull:
+    desc: Pull latest n8n image
+    cmds:
+      - docker pull {{.IMAGE}}
+  n8n:up:
+    desc: Run n8n container
+    cmds:
+      - docker run -it --rm --name {{.CONTAINER}} -p {{.PORT}}:{{.PORT}} -v n8n_data:/home/node/.n8n {{.IMAGE}}
+  pre-commit:all:
+    desc: Runs all configured pre-commit hooks on every file in the repo.
+    cmds:
+      - pre-commit run --all-files
+  pre-commit:autoupdate:
+    desc: Updates all repositories in .pre-commit-config.yaml to their latest versions
+    cmds:
+      - pre-commit autoupdate
