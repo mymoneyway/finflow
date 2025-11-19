@@ -143,14 +143,9 @@ finflow/
 ├── misc/
 │   └── docs/
 │       ├── architecture/           # System design, data flow diagrams
-│       ├── copilot/                # GitHub Copilot implementation guides
+│       ├── project-development/    # Implementation Steps
 │       │   ├── step-1-create-constitution-file.md
 │       │   ├── step-2-setup-repository-structure.md
-│       │   ├── step-3-implement-ingestion-workflows.md
-│       │   ├── step-4-build-parser-modules.md
-│       │   ├── step-5-configure-normalization.md
-│       │   ├── step-6-create-looker-dashboards.md
-│       │   └── prompt-library.md
 │       ├── etl/                    # Stage-specific documentation
 │       │   ├── ingestion.md
 │       │   ├── parsing.md
@@ -262,7 +257,6 @@ When adding/changing:
 - **Schema change**: Update `/misc/docs/etl/normalized-schema.md` + migration guide
 - **Workflow change**: Update workflow's companion README with new trigger logic or error handling
 - **Dashboard field**: Document purpose in `/misc/docs/etl/normalized-schema.md` under field description
-- **Copilot workflow**: Document AI-assisted development patterns in `/misc/docs/copilot/` for reusability
 
 ## Governance
 
